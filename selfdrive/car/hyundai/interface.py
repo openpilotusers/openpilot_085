@@ -216,14 +216,14 @@ class CarInterface(CarInterfaceBase):
     ret.longitudinalTuning.kpBP = [0., 1., 2., 4., 9., 17., 23., 31.]
     ret.longitudinalTuning.kpV = [1.2, 1.6, 2.0, 1.8, 1.6, 0.7, 0.3, 0.2]
     ret.longitudinalTuning.kiBP = [0., 1., 2., 4., 9., 17., 23., 31.]
-    ret.longitudinalTuning.kiV = [0.029, 0.035, 0.04, 0.038, 0.036, 0.024, 0.019, 0.017]
+    ret.longitudinalTuning.kiV = [0.028, 0.034, 0.039, 0.038, 0.036, 0.024, 0.019, 0.017]
 
     ret.longitudinalTuning.deadzoneBP = [0., 9., 17.]
     ret.longitudinalTuning.deadzoneV = [0., 0.1, 0.05]
     ret.longitudinalTuning.kdBP = [0., 4., 9., 17., 23., 31.]
-    ret.longitudinalTuning.kdV = [1.1, 0.95, 0.95, 0.75, 0.4, 0.35]
+    ret.longitudinalTuning.kdV = [1.2, 1.0, 0.95, 0.75, 0.4, 0.35]
     ret.longitudinalTuning.kfBP = [0., 1., 2., 4., 9., 17., 23., 31.]
-    ret.longitudinalTuning.kfV = [1.0, 1.7, 2.4, 2.3, 1.9, 1.0, 0.6, 0.5]
+    ret.longitudinalTuning.kfV = [1.0, 1.5, 1.9, 2.3, 2.2, 1.0, 0.6, 0.5]
 
     ret.enableCamera = True
     ret.enableBsm = 0x58b in fingerprint[0]
