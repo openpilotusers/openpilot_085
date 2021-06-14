@@ -166,7 +166,7 @@ def manager_init():
     raise Exception("Passive must be set to continue")
 
   if EON:
-    update_apks()
+    update_apks(show_spinner=True)
 
   os.umask(0)  # Make sure we can create files with 777 permissions
 
@@ -190,6 +190,8 @@ def manager_init():
   reg_res = register(show_spinner=True)
   if reg_res:
     dongle_id = reg_res
+  elif not reg_res:
+    dongle_id = "maintenance"
   else:
     serial = params.get("HardwareSerial")
     raise Exception(f"Registration failed for device {serial}")
@@ -201,14 +203,15 @@ def manager_init():
   cloudlog.bind_global(dongle_id=dongle_id, version=version, dirty=dirty,
                        device=HARDWARE.get_device_type())
 
+  if comma_remote and not (os.getenv("NOLOG") or os.getenv("NOCRASH") or PC):
+    crash.init()
+
   # ensure shared libraries are readable by apks
   if EON:
     os.chmod(BASEDIR, 0o755)
     os.chmod("/dev/shm", 0o777)
     os.chmod(os.path.join(BASEDIR, "cereal"), 0o755)
 
-  if comma_remote and not (os.getenv("NOLOG") or os.getenv("NOCRASH") or PC):
-    crash.init()
   crash.bind_user(id=dongle_id)
   crash.bind_extra(dirty=dirty, origin=origin, branch=branch, commit=commit,
                    device=HARDWARE.get_device_type())
