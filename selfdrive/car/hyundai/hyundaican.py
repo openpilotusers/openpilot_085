@@ -9,7 +9,7 @@ hyundai_checksum = crcmod.mkCrcFun(0x11D, initCrc=0xFD, rev=False, xorOut=0xdf)
 def create_lkas11(packer, frame, car_fingerprint, apply_steer, steer_req,
                   lkas11, sys_warning, sys_state, enabled,
                   left_lane, right_lane,
-                  left_lane_depart, right_lane_depart, lfa_available, steer_wind_down, bus):
+                  left_lane_depart, right_lane_depart, lfa_available, steer_wind_down, bus, ldws, steerwinddown_enabled):
   values = lkas11
   values["CF_Lkas_LdwsSysState"] = 3 if steer_req else sys_state
   values["CF_Lkas_SysWarning"] = sys_warning
@@ -17,10 +17,7 @@ def create_lkas11(packer, frame, car_fingerprint, apply_steer, steer_req,
   values["CF_Lkas_LdwsRHWarning"] = right_lane_depart
   values["CR_Lkas_StrToqReq"] = apply_steer
   values["CF_Lkas_ActToi"] = steer_req
-  if Params().get_bool("SteerWindDown"):
-    values["CF_Lkas_ToiFlt"] = steer_wind_down
-  else:
-    values["CF_Lkas_ToiFlt"] = 0
+  values["CF_Lkas_ToiFlt"] = steer_wind_down if steerwinddown_enabled else 0
   values["CF_Lkas_MsgCount"] = frame % 0x10
   values["CF_Lkas_Chksum"] = 0
 
@@ -53,7 +50,7 @@ def create_lkas11(packer, frame, car_fingerprint, apply_steer, steer_req,
   elif car_fingerprint in [CAR.K5, CAR.K5_HEV, CAR.K7, CAR.K7_HEV]:
     values["CF_Lkas_LdwsActivemode"] = 0
 
-  if Params().get_bool("LdwsCarFix"):
+  if ldws:
   	values["CF_Lkas_LdwsOpt_USM"] = 3
   dat = packer.make_can_msg("LKAS11", 0, values)[2]
 
