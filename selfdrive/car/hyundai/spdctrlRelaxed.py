@@ -46,7 +46,7 @@ class SpdctrlRelaxed(SpdController):
         yRelef = plan.yRel2 #EON Lead
         vRelef = plan.vRel2 * 3.6 + 0.5 #EON Lead
         lead2_status = plan.status2
-        self.target_speed_camera = self.target_speed_camera = CS.out.safetySign + round(CS.out.safetySign*0.01*self.map_spdlimit_offset)
+        self.target_speed_camera = CS.out.safetySign + round(CS.out.safetySign*0.01*self.map_spdlimit_offset)
         
         if self.target_speed_camera <= 29:
             self.map_enable = False
