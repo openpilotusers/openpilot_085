@@ -266,8 +266,8 @@ class SpdController():
     def get_tm_speed(self, CS, CC, set_time, add_val, safety_dis=5):
         time = int(set_time)
 
-        delta_speed = CC.vSetDis - int(round(CS.clu_Vanz))
-        set_speed = CC.vSetDis + add_val
+        delta_speed = CC.setspeed - int(round(CS.clu_Vanz))
+        set_speed = CC.setspeed + add_val
         
         if add_val > 0:  # 증가
             if delta_speed > safety_dis:
@@ -288,7 +288,7 @@ class SpdController():
 
     def update_log(self, CS, CC, set_speed, target_set_speed, long_wait_cmd):
         str3 = 'M={:3.0f} DST={:3.0f} VSD={:.0f} DA={:.0f}/{:.0f}/{:.0f} DG={:s} DO={:.0f}'.format(
-            CS.out.cruiseState.modeSel, target_set_speed, CC.vSetDis, CS.driverAcc_time, long_wait_cmd, self.long_curv_timer, self.seq_step_debug, CS.driverOverride )
+            CS.out.cruiseState.modeSel, target_set_speed, CC.setspeed, CS.driverAcc_time, long_wait_cmd, self.long_curv_timer, self.seq_step_debug, CS.driverOverride )
         str4 = ' CS={:.1f}/{:.1f} '.format(  CC.dRel, CC.vRel )
         str5 = str3 +  str4
         trace1.printf2( str5 )
@@ -332,7 +332,7 @@ class SpdController():
 
         # control process
         target_set_speed = set_speed
-        delta = int(round(set_speed)) - CC.vSetDis
+        delta = int(round(set_speed)) - CC.setspeed
         dec_step_cmd = 1
 
         camspeed = Params().get("LimitSetSpeedCamera", encoding="utf8")
@@ -346,16 +346,16 @@ class SpdController():
         if self.long_curv_timer < long_wait_cmd:
             pass
         elif delta > 0:
-            if ((self.map_spd_camera+round(self.map_spd_camera*0.01*self.map_spd_limit_offset)) == CC.vSetDis) and self.map_spd_enable:
-                set_speed = CC.vSetDis + 0
+            if ((self.map_spd_camera+round(self.map_spd_camera*0.01*self.map_spd_limit_offset)) == CC.setspeed) and self.map_spd_enable:
+                set_speed = CC.setspeed + 0
                 btn_type = 0
                 self.long_curv_timer = 0
             else:
-                set_speed = CC.vSetDis + dec_step_cmd
+                set_speed = CC.setspeed + dec_step_cmd
                 btn_type = 1
                 self.long_curv_timer = 0
         elif delta < 0:
-            set_speed = CC.vSetDis - dec_step_cmd
+            set_speed = CC.setspeed - dec_step_cmd
             btn_type = 2
             self.long_curv_timer = 0
         if self.cruise_set_mode == 0:

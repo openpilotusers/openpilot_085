@@ -136,7 +136,7 @@ def manager_init():
     ("MdpsHarness", "1"),
     ("WhitePandaSupport", "0"),
     ("SteerWarningFix", "0"),
-    ("vSetDis", "0"),
+    ("vSetDis", "5"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))
