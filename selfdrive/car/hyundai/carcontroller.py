@@ -143,6 +143,7 @@ class CarController():
     self.model_speed = 0
     self.curve_speed = 0
     self.setspeed = 0
+    self.setspeed_prev = 0
     self.setspeed_timer = 0
 
     self.dRel = 150
@@ -360,20 +361,18 @@ class CarController():
       self.acc_standstill_timer = 0
       self.acc_standstill = False
     elif run_speed_ctrl:
-      self.setspeed_timer += 1
-      if self.setspeed_timer > 30:
-        self.setspeed_timer = 0
-        is_sc_run = self.SC.update(CS, sm, self)
-        if is_sc_run:
-          setspd_delta = self.SC.btn_type
-          if setspd_delta == 0:
-            pass
-          elif setspd_delta == 1:
-            self.setspeed = int(Params().get("vSetDis", encoding="utf8")) + 1
-            Params().put("vSetDis", str(self.setspeed))
-          elif setspd_delta == 2:
-            self.setspeed = int(Params().get("vSetDis", encoding="utf8")) - 1
-            Params().put("vSetDis", str(self.setspeed))
+      is_sc_run = self.SC.update(CS, sm, self)
+      if is_sc_run:
+        setspd_delta = self.SC.btn_type
+        if setspd_delta == 0:
+          self.setspeed_prev = self.setspeed
+        elif setspd_delta == 1 and self.setspeed_prev is not None:
+          self.setspeed_prev = int(Params().get("vSetDis", encoding="utf8")) + 1
+        elif setspd_delta == 2 and self.setspeed_prev is not None:
+          self.setspeed_prev = int(Params().get("vSetDis", encoding="utf8")) - 1
+        if self.setspeed_prev is not None and self.setspeed_prev != self.setspeed:
+          self.setspeed = self.setspeed_prev
+          Params().put("vSetDis", str(self.setspeed))
     else:
       self.vdiff = 0.
       self.resumebuttoncnt = 0
