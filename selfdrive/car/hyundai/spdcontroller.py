@@ -199,38 +199,38 @@ class SpdController():
         set_speed_kph = int(round(self.cruise_set_speed_kph))
         delta_vsetdis = 0
         if CS.out.cruiseAccStatus:
-            delta_vsetdis = abs(CC.vSetDis - self.prev_VSetDis)
+            delta_vsetdis = abs(int(CS.CP.vCruisekph) - self.prev_VSetDis)
             if self.prev_clu_CruiseSwState != CS.cruise_buttons:
                 if CS.cruise_buttons == 1 or CS.cruise_buttons == 2:
-                    self.prev_VSetDis = CC.vSetDis
+                    self.prev_VSetDis = int(CS.CP.vCruisekph)
                 elif CS.driverOverride:
-                    set_speed_kph = CC.vSetDis
+                    set_speed_kph = int(CS.CP.vCruisekph)
                 elif self.prev_clu_CruiseSwState == 1:   # up 
                     if self.curise_set_first:
                         self.curise_set_first = 0
-                        set_speed_kph =  CC.vSetDis
+                        set_speed_kph =  int(CS.CP.vCruisekph)
                     elif delta_vsetdis > 0:
-                        set_speed_kph = CC.vSetDis
+                        set_speed_kph = int(CS.CP.vCruisekph)
                     elif not self.curise_sw_check:
                         set_speed_kph += 1
                 elif self.prev_clu_CruiseSwState == 2:  # dn
                     if self.curise_set_first:
                         self.curise_set_first = 0
-                        set_speed_kph = CC.vSetDis
+                        set_speed_kph = int(CS.CP.vCruisekph)
                     elif delta_vsetdis > 0:
-                        set_speed_kph = CC.vSetDis
+                        set_speed_kph = int(CS.CP.vCruisekph)
                     elif not self.curise_sw_check:
                         set_speed_kph -= 1
 
                 self.prev_clu_CruiseSwState = CS.cruise_buttons
             elif (CS.cruise_buttons == 1 or CS.cruise_buttons == 2) and delta_vsetdis > 0:
                 self.curise_sw_check = True
-                set_speed_kph = CC.vSetDis
+                set_speed_kph = int(CS.CP.vCruisekph)
         else:
             self.curise_sw_check = False
             self.curise_set_first = 1
-            self.prev_VSetDis = CC.vSetDis
-            set_speed_kph = CC.vSetDis
+            self.prev_VSetDis = int(CS.CP.vCruisekph)
+            set_speed_kph = int(CS.CP.vCruisekph)
             if self.prev_clu_CruiseSwState != CS.cruise_buttons:  # MODE 전환.
                 if CS.cruise_buttons == 3 and not CS.out.cruiseAccStatus and CS.out.cruiseState.available:
                     self.cruise_set_mode += 1
