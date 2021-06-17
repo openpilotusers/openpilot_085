@@ -339,7 +339,10 @@ class CarController():
 
     run_speed_ctrl = self.enabled and self.opkr_variablecruise and CS.out.cruiseAccStatus and (CS.out.cruiseState.modeSel > 0)
     
-    self.setspeed = int(Params().get("vSetDis", encoding="utf8"))
+    try:
+      self.setspeed = int(Params().get("vSetDis", encoding="utf8"))
+    except:
+      pass
     curv_speed = self.SC.cal_curve_speed(sm, CS.out.vEgo)
 
     if self.prev_cruiseButton != CS.cruise_buttons:  # gap change for RadarDisable
