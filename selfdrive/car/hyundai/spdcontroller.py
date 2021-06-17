@@ -107,6 +107,7 @@ class SpdController():
 
         self.map_spd_enable = False
         self.map_spd_camera = 0
+        self.vSetDis = 0
 
     def reset(self):
         self.v_model = 0
@@ -199,38 +200,38 @@ class SpdController():
         set_speed_kph = int(round(self.cruise_set_speed_kph))
         delta_vsetdis = 0
         if CS.out.cruiseAccStatus:
-            delta_vsetdis = abs(int(CS.CP.vCruisekph) - self.prev_VSetDis)
+            delta_vsetdis = abs(self.vSetDis - self.prev_VSetDis)
             if self.prev_clu_CruiseSwState != CS.cruise_buttons:
                 if CS.cruise_buttons == 1 or CS.cruise_buttons == 2:
-                    self.prev_VSetDis = int(CS.CP.vCruisekph)
+                    self.prev_VSetDis = self.vSetDis
                 elif CS.driverOverride:
-                    set_speed_kph = int(CS.CP.vCruisekph)
+                    set_speed_kph = self.vSetDis
                 elif self.prev_clu_CruiseSwState == 1:   # up 
                     if self.curise_set_first:
                         self.curise_set_first = 0
-                        set_speed_kph =  int(CS.CP.vCruisekph)
+                        set_speed_kph =  self.vSetDis
                     elif delta_vsetdis > 0:
-                        set_speed_kph = int(CS.CP.vCruisekph)
+                        set_speed_kph = self.vSetDis
                     elif not self.curise_sw_check:
                         set_speed_kph += 1
                 elif self.prev_clu_CruiseSwState == 2:  # dn
                     if self.curise_set_first:
                         self.curise_set_first = 0
-                        set_speed_kph = int(CS.CP.vCruisekph)
+                        set_speed_kph = self.vSetDis
                     elif delta_vsetdis > 0:
-                        set_speed_kph = int(CS.CP.vCruisekph)
+                        set_speed_kph = self.vSetDis
                     elif not self.curise_sw_check:
                         set_speed_kph -= 1
 
                 self.prev_clu_CruiseSwState = CS.cruise_buttons
             elif (CS.cruise_buttons == 1 or CS.cruise_buttons == 2) and delta_vsetdis > 0:
                 self.curise_sw_check = True
-                set_speed_kph = int(CS.CP.vCruisekph)
+                set_speed_kph = self.vSetDis
         else:
             self.curise_sw_check = False
             self.curise_set_first = 1
-            self.prev_VSetDis = int(CS.CP.vCruisekph)
-            set_speed_kph = int(CS.CP.vCruisekph)
+            self.prev_VSetDis = self.vSetDis
+            set_speed_kph = self.vSetDis
             if self.prev_clu_CruiseSwState != CS.cruise_buttons:  # MODE 전환.
                 if CS.cruise_buttons == 3 and not CS.out.cruiseAccStatus and CS.out.cruiseState.available:
                     self.cruise_set_mode += 1
@@ -239,8 +240,8 @@ class SpdController():
                 self.prev_clu_CruiseSwState = CS.cruise_buttons
             
 
-        if set_speed_kph <= 15:
-            set_speed_kph = 15
+        if set_speed_kph <= 5:
+            set_speed_kph = 5
 
         self.cruise_set_speed_kph = set_speed_kph
         return self.cruise_set_mode, set_speed_kph
@@ -250,9 +251,9 @@ class SpdController():
     def get_lead(sm):
         plan = sm['longitudinalPlan']
         if 0 < plan.dRel1 < 149:
-            dRel = plan.dRel1 #EON Lead
-            yRel = plan.yRel1 #EON Lead
-            vRel = plan.vRel1 * 3.6 #EON Lead
+            dRel = int(plan.dRel1) #EON Lead
+            yRel = int(plan.yRel1) #EON Lead
+            vRel = int(plan.vRel1 * 3.6 + 0.5) #EON Lead
         else:
             dRel = 150
             yRel = 0
@@ -266,8 +267,8 @@ class SpdController():
     def get_tm_speed(self, CS, CC, set_time, add_val, safety_dis=5):
         time = int(set_time)
 
-        delta_speed = int(CS.CP.vCruisekph) - int(round(CS.clu_Vanz))
-        set_speed = int(CS.CP.vCruisekph) + add_val
+        delta_speed = self.vSetDis - int(round(CS.clu_Vanz))
+        set_speed = self.vSetDis + add_val
         
         if add_val > 0:  # 증가
             if delta_speed > safety_dis:
@@ -288,7 +289,7 @@ class SpdController():
 
     def update_log(self, CS, CC, set_speed, target_set_speed, long_wait_cmd):
         str3 = 'M={:3.0f} DST={:3.0f} VSD={:.0f} DA={:.0f}/{:.0f}/{:.0f} DG={:s} DO={:.0f}'.format(
-            CS.out.cruiseState.modeSel, target_set_speed, CS.CP.vCruisekph, CS.driverAcc_time, long_wait_cmd, self.long_curv_timer, self.seq_step_debug, CS.driverOverride )
+            CS.out.cruiseState.modeSel, target_set_speed, self.vSetDis, CS.driverAcc_time, long_wait_cmd, self.long_curv_timer, self.seq_step_debug, CS.driverOverride )
         str4 = ' CS={:.1f}/{:.1f} '.format(  CC.dRel, CC.vRel )
         str5 = str3 +  str4
         trace1.printf2( str5 )
@@ -332,7 +333,7 @@ class SpdController():
 
         # control process
         target_set_speed = set_speed
-        delta = int(round(set_speed)) - int(CS.CP.vCruisekph)
+        delta = int(round(set_speed)) - self.vSetDis
         dec_step_cmd = 1
 
         camspeed = Params().get("LimitSetSpeedCamera", encoding="utf8")
@@ -346,17 +347,17 @@ class SpdController():
         if self.long_curv_timer < long_wait_cmd:
             pass
         elif delta > 0:
-            if ((self.map_spd_camera+round(self.map_spd_camera*0.01*self.map_spd_limit_offset)) == int(CS.CP.vCruisekph)) and self.map_spd_enable:
-                set_speed = int(CS.CP.vCruisekph) + 0
+            if ((self.map_spd_camera+round(self.map_spd_camera*0.01*self.map_spd_limit_offset)) == self.vSetDis) and self.map_spd_enable:
+                set_speed = self.vSetDis + 0
                 btn_type = 0
                 self.long_curv_timer = 0
             else:
-                set_speed = int(CS.CP.vCruisekph) + dec_step_cmd
+                set_speed = self.vSetDis + dec_step_cmd
                 btn_type = 1
                 self.long_curv_timer = 0
         elif delta < 0:
-            set_speed = int(CS.CP.vCruisekph) - dec_step_cmd
-            btn_type = -1
+            set_speed = self.vSetDis - dec_step_cmd
+            btn_type = 2
             self.long_curv_timer = 0
         if self.cruise_set_mode == 0:
             btn_type = 0
@@ -370,6 +371,7 @@ class SpdController():
 
 
     def update(self, CS, sm, CC):
+        self.vSetDis = int(self.params.get("vSetDis", encoding="utf8"))
         self.cruise_set_mode = CS.out.cruiseState.modeSel
         #self.cruise_set_speed_kph = int(round(CS.out.cruiseState.speed * CV.MS_TO_KPH))
         self.cruise_set_speed_kph = int(round(CC.vCruiseSet))
@@ -403,4 +405,4 @@ class SpdController():
                     self.btn_type = 0
                 else:
                     return 1
-        return  0   
+        return  0

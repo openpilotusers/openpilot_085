@@ -143,11 +143,11 @@ class CarController():
     self.model_speed = 0
     self.curve_speed = 0
     self.setspeed = 0
+    self.setspeed_timer = 0
 
     self.dRel = 150
     self.yRel = 0
     self.vRel = 0
-
 
     self.steerMax_base = int(self.params.get("SteerMaxBaseAdj", encoding="utf8"))
     self.steerDeltaUp_base = int(self.params.get("SteerDeltaUpBaseAdj", encoding="utf8"))
@@ -339,14 +339,8 @@ class CarController():
 
     run_speed_ctrl = self.enabled and self.opkr_variablecruise and CS.out.cruiseAccStatus and (CS.out.cruiseState.modeSel > 0)
     
-    self.setspeed = set_speed * speed_conv
+    self.setspeed = int(Params().get("vSetDis", encoding="utf8"))
     curv_speed = self.SC.cal_curve_speed(sm, CS.out.vEgo)
-    target_curv_speed = interp(abs(curv_speed), [30, 60, 90, 255], [40, 55, 75, 255])
-    cam_speed = self.sm['controlsState'].limitSpeedCamera
-    if self.setspeed > cam_speed > 29:
-      self.setspeed = cam_speed
-    elif self.setspeed > target_curv_speed and CS.out.vEgo*speed_conv > 40 and self.dRel >= 15:
-      self.setspeed = target_curv_speed
 
     if self.prev_cruiseButton != CS.cruise_buttons:  # gap change for RadarDisable
       if CS.cruise_buttons == 3:
@@ -362,14 +356,22 @@ class CarController():
     elif CS.out.cruiseState.standstill and CS.scc12["ACCMode"] != 0 and CS.vrelative > 0.1:
       self.acc_standstill_timer = 0
       self.acc_standstill = False
-    # elif run_speed_ctrl:
-    #   is_sc_run = self.SC.update(CS, sm, self)
-    #   if is_sc_run:
-    #     setspd_delta = self.SC.btn_type
-    #     #target_spd = self.SC.sc_clu_speed
-    #     self.setspeed += setspd_delta
+    elif run_speed_ctrl:
+      self.setspeed_timer += 1
+      if self.setspeed_timer > 20:
+        self.setspeed_timer = 0
+        is_sc_run = self.SC.update(CS, sm, self)
+        if is_sc_run:
+          setspd_delta = self.SC.btn_type
+          if setspd_delta == 0:
+            pass
+          elif setspd_delta == 1:
+            self.setspeed = int(Params().get("vSetDis", encoding="utf8")) + 1
+            Params().put("vSetDis", str(self.setspeed))
+          elif setspd_delta == 2:
+            self.setspeed = int(Params().get("vSetDis", encoding="utf8")) - 1
+            Params().put("vSetDis", str(self.setspeed))
     else:
-    
       self.vdiff = 0.
       self.resumebuttoncnt = 0
 

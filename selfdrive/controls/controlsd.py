@@ -145,7 +145,6 @@ class Controls:
     self.can_rcv_error = False
     self.soft_disable_timer = 0
     self.v_cruise_kph = 255
-    self.v_cruise_kph_cluster = 0
     self.v_cruise_kph_last = 0
     self.mismatch_counter = 0
     self.can_error_counter = 0
@@ -387,7 +386,7 @@ class Controls:
     if not self.CP.enableCruise:
       self.v_cruise_kph = update_v_cruise(self.v_cruise_kph, CS.vEgo, CS.gasPressed, CS.buttonEvents, self.enabled, self.is_metric)
       if CS.cruiseButtons == 1 or CS.cruiseButtons == 2:
-        self.v_cruise_kph_cluster = self.v_cruise_kph
+        Params().put("vSetDis", str(self.v_cruise_kph))
     elif self.CP.enableCruise and CS.cruiseState.enabled:
       if Params().get_bool('OpkrVariableCruise') and CS.cruiseState.modeSel != 0 and self.CP.vCruisekph > 30:
         self.v_cruise_kph = self.CP.vCruisekph
