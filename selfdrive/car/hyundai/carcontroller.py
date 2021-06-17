@@ -349,8 +349,6 @@ class CarController():
       self.setspeed = target_curv_speed
 
     if self.prev_cruiseButton != CS.cruise_buttons:  # gap change for RadarDisable
-      # if CS.cruise_buttons == 1 or CS.cruise_buttons == 2:
-      #   self.setspeed = set_speed * speed_conv
       if CS.cruise_buttons == 3:
         self.gapsettingdance -= 1
       if self.gapsettingdance < 1:
