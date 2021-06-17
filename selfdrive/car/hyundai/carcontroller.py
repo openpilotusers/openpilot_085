@@ -358,7 +358,7 @@ class CarController():
       self.acc_standstill = False
     elif run_speed_ctrl:
       self.setspeed_timer += 1
-      if self.setspeed_timer > 20:
+      if self.setspeed_timer > 30:
         self.setspeed_timer = 0
         is_sc_run = self.SC.update(CS, sm, self)
         if is_sc_run:
