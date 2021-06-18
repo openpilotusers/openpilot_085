@@ -387,7 +387,6 @@ static void update_status(UIState *s) {
       Params().put("LimitSetSpeedCamera", "0", 1);
       Params().put("LimitSetSpeedCameraDist", "0", 1);
       Params().put("OpkrMapSign", "0", 1);
-      Params().put("vSetDis", "5", 1);
     } else {
       s->vipc_client->connected = false;
     }

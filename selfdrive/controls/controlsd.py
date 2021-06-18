@@ -188,6 +188,7 @@ class Controls:
     self.model_long_alert_prev = True
     self.second = 0.0
     self.map_enabled = False
+    self.v_cruise_kph_cluster = 0
 
   def update_events(self, CS):
     """Compute carEvents from carState"""
@@ -386,7 +387,7 @@ class Controls:
     if not self.CP.enableCruise:
       self.v_cruise_kph = update_v_cruise(self.v_cruise_kph, CS.vEgo, CS.gasPressed, CS.buttonEvents, self.enabled, self.is_metric)
       if self.v_cruise_kph_last != self.v_cruise_kph:
-        Params().put("vSetDis", str(self.v_cruise_kph))
+        self.v_cruise_kph_cluster = self.v_cruise_kph
     elif self.CP.enableCruise and CS.cruiseState.enabled:
       if Params().get_bool('OpkrVariableCruise') and CS.cruiseState.modeSel != 0 and self.CP.vCruisekph > 30:
         self.v_cruise_kph = self.CP.vCruisekph
@@ -574,7 +575,7 @@ class Controls:
     CC.cruiseControl.speedOverride = float(speed_override if self.CP.enableCruise else 0.0)
     CC.cruiseControl.accelOverride = self.CI.calc_accel_override(CS.aEgo, self.sm['longitudinalPlan'].aTarget, CS.vEgo, self.sm['longitudinalPlan'].vTarget)
 
-    CC.hudControl.setSpeed = float(self.v_cruise_kph * CV.KPH_TO_MS)
+    CC.hudControl.setSpeed = float(self.v_cruise_kph_cluster * CV.KPH_TO_MS)
     CC.hudControl.speedVisible = self.enabled
     CC.hudControl.lanesVisible = self.enabled
     CC.hudControl.leadVisible = self.sm['longitudinalPlan'].hasLead

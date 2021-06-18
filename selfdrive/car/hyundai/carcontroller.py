@@ -1,3 +1,4 @@
+import os
 from cereal import car, log, messaging
 from common.realtime import DT_CTRL
 from common.numpy_fast import clip
@@ -337,7 +338,7 @@ class CarController():
     run_speed_ctrl = self.enabled and self.opkr_variablecruise and CS.out.cruiseAccStatus and (CS.out.cruiseState.modeSel > 0)
     
     if self.setspeed_prev != set_speed or CS.cruise_buttons == 1 or CS.cruise_buttons == 2:
-      self.setspeed = int(Params().get("vSetDis", encoding="utf8"))
+      os.environ["VSetDis"] = str(round(set_speed * speed_conv))
       self.setspeed_prev = set_speed
 
     curv_speed = self.SC.cal_curve_speed(sm, CS.out.vEgo)
@@ -363,15 +364,15 @@ class CarController():
       if is_sc_run:
         setspd_delta = self.SC.btn_type
         if self.setspeed_timer >= 5:
-          Params().put("vSetDis", str(self.setspeed))
+          os.environ["VSetDis"] = str(self.setspeed)
           self.setspeed_timer = -5
         elif self.setspeed_timer == 0:
           if setspd_delta == 0:
             pass
           elif setspd_delta == 1:
-            self.setspeed = int(Params().get("vSetDis", encoding="utf8")) + 1
+            self.setspeed = max(5, int(os.environ.get("VSetDis")) + 1)
           elif setspd_delta == 2:
-            self.setspeed = int(Params().get("vSetDis", encoding="utf8")) - 1
+            self.setspeed = max(5, int(os.environ.get("VSetDis")) - 1)
         self.setspeed_timer += 1
     else:
       self.vdiff = 0.
