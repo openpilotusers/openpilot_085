@@ -37,6 +37,8 @@ _A_CRUISE_MAX_BP = [0.,  6.4, 22.5, 40.]
 _A_TOTAL_MAX_V = [1.7, 3.2]
 _A_TOTAL_MAX_BP = [20., 40.]
 
+MPC_TIMESTEPS = [i / 5. for i in range(11)]
+
 
 def calc_cruise_accel_limits(v_ego, following):
   a_cruise_min = interp(v_ego, _A_CRUISE_MIN_BP, _A_CRUISE_MIN_V)
@@ -207,7 +209,7 @@ class Planner():
     self.a_acc_start = self.a_acc_next
 
     self.second += 0.25
-    if int(self.second) % 2 == 0:
+    if self.second > 1.0:
       self.map_enabled = self.params.get_bool("OpkrMapEnable")
       self.second = 0.0
     if self.map_enabled:
