@@ -339,10 +339,9 @@ class CarController():
 
     run_speed_ctrl = self.enabled and self.opkr_variablecruise and CS.out.cruiseAccStatus and (CS.out.cruiseState.modeSel > 0)
     
-    try:
+    if self.setspeed is not None:
       self.setspeed = int(Params().get("vSetDis", encoding="utf8"))
-    except:
-      pass
+
     curv_speed = self.SC.cal_curve_speed(sm, CS.out.vEgo)
 
     if self.prev_cruiseButton != CS.cruise_buttons:  # gap change for RadarDisable
@@ -365,15 +364,15 @@ class CarController():
         setspd_delta = self.SC.btn_type
         self.setspeed_timer += 1
         if self.setspeed_timer >= 25:
+          Params().put("vSetDis", str(self.setspeed))
           self.setspeed_timer = 0
+        elif self.setspeed_timer >= 20:
           if setspd_delta == 0:
             pass
           elif setspd_delta == 1 and self.setspeed is not None:
             self.setspeed = int(Params().get("vSetDis", encoding="utf8")) + 1
-            Params().put("vSetDis", str(self.setspeed))
           elif setspd_delta == 2 and self.setspeed is not None:
             self.setspeed = int(Params().get("vSetDis", encoding="utf8")) - 1
-            Params().put("vSetDis", str(self.setspeed))
     else:
       self.vdiff = 0.
       self.resumebuttoncnt = 0
