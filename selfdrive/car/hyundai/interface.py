@@ -217,9 +217,9 @@ class CarInterface(CarInterfaceBase):
     ret.brakeMaxV = [0.7, 3.0]   # max brake allowed
 
     ret.longitudinalTuning.kpBP = [0., 4., 9., 17., 23., 31.]
-    ret.longitudinalTuning.kpV = [0.35, 0.63, 0.62, 0.35, 0.28, 0.19]
+    ret.longitudinalTuning.kpV = [0.35, 0.63, 0.6, 0.34, 0.28, 0.19]
     ret.longitudinalTuning.kiBP = [0., 4., 9., 17., 23., 31.]
-    ret.longitudinalTuning.kiV = [0.019, 0.021, 0.023, 0.019, 0.017, 0.016]
+    ret.longitudinalTuning.kiV = [0.019, 0.021, 0.02, 0.019, 0.017, 0.016]
 
     ret.longitudinalTuning.deadzoneBP = [0., 9., 17.]
     ret.longitudinalTuning.deadzoneV = [0., 0.1, 0.05]

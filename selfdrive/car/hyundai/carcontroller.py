@@ -371,9 +371,9 @@ class CarController():
           if setspd_delta == 0:
             pass
           elif setspd_delta == 1:
-            self.setspeed = max(5, int(os.environ.get("VSetDis")) + 1)
+            self.setspeed = max(5, int(float(os.environ.get("VSetDis"))) + 1)
           elif setspd_delta == 2:
-            self.setspeed = max(5, int(os.environ.get("VSetDis")) - 1)
+            self.setspeed = max(5, int(float(os.environ.get("VSetDis"))) - 1)
         self.setspeed_timer += 1
     else:
       self.vdiff = 0.
