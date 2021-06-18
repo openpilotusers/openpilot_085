@@ -144,8 +144,8 @@ class CarController():
     self.model_speed = 0
     self.curve_speed = 0
     self.setspeed = 0
+    self.setspeed_timer = 0
     self.setspeed_prev = 0
-    self.setspeed_status = False
 
     self.dRel = 150
     self.yRel = 0
@@ -364,18 +364,17 @@ class CarController():
       is_sc_run = self.SC.update(CS, sm, self)
       if is_sc_run:
         setspd_delta = self.SC.btn_type
-        if self.setspeed_status:
+        if self.setspeed_timer >= 5:
           os.environ["VSetDis"] = str(self.setspeed)
-          self.setspeed_status = False
-        elif not self.setspeed_status:
+          self.setspeed_timer = -5
+        elif self.setspeed_timer == 0:
           if setspd_delta == 0:
             pass
           elif setspd_delta == 1:
             self.setspeed = max(5, int(os.environ.get("VSetDis")) + 1)
-            self.setspeed_status = True
           elif setspd_delta == 2:
             self.setspeed = max(5, int(os.environ.get("VSetDis")) - 1)
-            self.setspeed_status = True
+        self.setspeed_timer += 1
     else:
       self.vdiff = 0.
       self.resumebuttoncnt = 0
