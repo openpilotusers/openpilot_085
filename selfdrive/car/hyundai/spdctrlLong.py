@@ -115,8 +115,8 @@ class SpdctrlLong(SpdController):
             #     lead_wait_cmd, lead_set_speed = self.get_tm_speed(CS, CC, max(25, 70+(lead_objspd*2)), -1)
             elif 65 > CS.clu_Vanz > 30 and lead_objspd < -2 and int(CS.clu_Vanz) <= CC.setspeed and int(CS.clu_Vanz) >= dRel*0.85 and 1 < dRel < 149:
                 self.seq_step_debug = "SS>VS,60>v>30,-1"
-                lead_wait_cmd, lead_set_speed = self.get_tm_speed(CS, CC, max(15, 220-(abs(lead_objspd**3))), -1)
-            elif 65 > CS.clu_Vanz > 30 and lead_objspd < 0 and int(CS.clu_Vanz)+2 < CC.setspeed and int(CS.clu_Vanz) >= dRel*0.85 and 1 < dRel < 149:
+                lead_wait_cmd, lead_set_speed = self.get_tm_speed(CS, CC, max(10, 200-(abs(lead_objspd**3))), -1)
+            elif 65 > CS.clu_Vanz > 30 and lead_objspd < 0 and int(CS.clu_Vanz)+1 < CC.setspeed and int(CS.clu_Vanz) >= dRel*0.85 and 1 < dRel < 149:
                 self.seq_step_debug = "감속준비"
                 lead_wait_cmd, lead_set_speed = self.get_tm_speed( CS, CC, 15, -1)
             elif 7 < int(CS.clu_Vanz) < 30 and lead_objspd < 0:

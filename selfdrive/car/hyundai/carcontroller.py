@@ -364,9 +364,9 @@ class CarController():
       is_sc_run = self.SC.update(CS, sm, self)
       if is_sc_run:
         setspd_delta = self.SC.btn_type
-        if self.setspeed_timer >= 4:
+        if self.setspeed_timer >= 3:
           os.environ["VSetDis"] = str(self.setspeed)
-          self.setspeed_timer = -4
+          self.setspeed_timer = -3
         elif self.setspeed_timer == 0:
           if setspd_delta == 0:
             pass
