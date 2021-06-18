@@ -340,6 +340,7 @@ class CarController():
     if self.setspeed_prev != set_speed or CS.cruise_buttons == 1 or CS.cruise_buttons == 2:
       os.environ["VSetDis"] = str(round(set_speed * speed_conv))
       self.setspeed_prev = set_speed
+      self.setspeed = set_speed * speed_conv
 
     curv_speed = self.SC.cal_curve_speed(sm, CS.out.vEgo)
 
