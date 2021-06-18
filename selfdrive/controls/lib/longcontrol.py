@@ -66,6 +66,15 @@ class LongControl():
                                  rate=RATE,
                                  sat_limit=0.8,
                                  convert=compute_gb)
+    kfBP = [0., 4., 9., 17., 23., 31.]
+    kfV = [1.5, 2.0, 1.5, 1.0, 0.9, 0.8]
+    self.pid_ = LongPIDController((CP.longitudinalTuning.kpBP, CP.longitudinalTuning.kpV),
+                                  (CP.longitudinalTuning.kiBP, CP.longitudinalTuning.kiV),
+                                  (CP.longitudinalTuning.kdBP, CP.longitudinalTuning.kdV),
+                                  (kfBP, kfV),
+                                  rate=RATE,
+                                  sat_limit=0.8,
+                                  convert=compute_gb)
     self.v_pid = 0.0
     self.last_output_gb = 0.0
     self.long_stat = ""
@@ -137,7 +146,10 @@ class LongControl():
         self.damping_timer -= 1
         self.decel_damping = interp(self.damping_timer, [0, 25], [1, self.decel_damping2])
 
-      output_gb = self.pid.update(self.v_pid, v_ego_pid, speed=v_ego_pid, deadzone=deadzone, feedforward=a_target, freeze_integrator=prevent_overshoot)
+      if vRel < 0:
+        output_gb = self.pid_.update(self.v_pid, v_ego_pid, speed=v_ego_pid, deadzone=deadzone, feedforward=a_target, freeze_integrator=prevent_overshoot)
+      else:
+        output_gb = self.pid.update(self.v_pid, v_ego_pid, speed=v_ego_pid, deadzone=deadzone, feedforward=a_target, freeze_integrator=prevent_overshoot)
       output_gb *= self.decel_damping
 
       if prevent_overshoot or CS.brakeHold:
