@@ -94,7 +94,7 @@ def build(spinner, dirty=False):
     f.unlink()
 
 
-if __name__ == "__main__" and not PREBUILT:
+if __name__ == "__main__":
   spinner = Spinner()
   spinner.update_progress(0, 100)
   build(spinner, dirty)
