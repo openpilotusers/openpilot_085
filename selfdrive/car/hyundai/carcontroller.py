@@ -365,7 +365,7 @@ class CarController():
         if self.setspeed_timer >= 10:
           Params().put("vSetDis", str(self.setspeed))
           self.setspeed_timer = -10
-        elif self.setspeed_timer >= 0 and self.setspeed_timer % 10 == 0:
+        elif self.setspeed_timer == 0:
           if setspd_delta == 0:
             pass
           elif setspd_delta == 1:
