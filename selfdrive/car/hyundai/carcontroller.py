@@ -143,6 +143,7 @@ class CarController():
     self.model_speed = 0
     self.curve_speed = 0
     self.setspeed = 0
+    self.setspeed_prev = 0
     self.setspeed_timer = 0
 
     self.dRel = 150
@@ -315,10 +316,6 @@ class CarController():
 
       can_sends.append(create_clu11(self.packer, 1, CS.clu11, Buttons.NONE, enabled_speed, self.clu11_cnt))
 
-    str_log1 = 'M/C={:03.0f}/{:03.0f}  TQ={:03.0f}  R={:03.0f}  ST={:03.0f}/{:01.0f}/{:01.0f}  G={:01.0f}'.format(abs(self.model_speed), self.curve_speed, abs(new_steer), self.timer1.sampleTime(), self.steerMax, self.steerDeltaUp, self.steerDeltaDown, CS.out.cruiseGapSet)
-
-    trace1.printf1('{}  {}'.format(str_log1, self.str_log2))
-
     if CS.out.cruiseState.modeSel == 0 and self.mode_change_switch == 4:
       self.mode_change_timer = 50
       self.mode_change_switch = 0
@@ -339,8 +336,9 @@ class CarController():
 
     run_speed_ctrl = self.enabled and self.opkr_variablecruise and CS.out.cruiseAccStatus and (CS.out.cruiseState.modeSel > 0)
     
-    if self.setspeed is not None:
+    if self.setspeed_prev != set_speed or CS.cruise_buttons == 1 or CS.cruise_buttons == 2:
       self.setspeed = int(Params().get("vSetDis", encoding="utf8"))
+      self.setspeed_prev = set_speed
 
     curv_speed = self.SC.cal_curve_speed(sm, CS.out.vEgo)
 
@@ -351,6 +349,8 @@ class CarController():
         self.gapsettingdance = 4
       self.prev_cruiseButton = CS.cruise_buttons
 
+    is_sc_run = False
+    setspd_delta = 0
     if pcm_cancel_cmd and CS.scc12["ACCMode"] != 0 and not CS.out.standstill:
       self.vdiff = 0.
       self.resumebuttoncnt = 0
@@ -362,20 +362,24 @@ class CarController():
       is_sc_run = self.SC.update(CS, sm, self)
       if is_sc_run:
         setspd_delta = self.SC.btn_type
-        self.setspeed_timer += 1
-        if self.setspeed_timer >= 25:
+        if self.setspeed_timer >= 10:
           Params().put("vSetDis", str(self.setspeed))
-          self.setspeed_timer = 0
-        elif self.setspeed_timer >= 20:
+          self.setspeed_timer = -10
+        elif self.setspeed_timer >= 0 and self.setspeed_timer % 10 == 0:
           if setspd_delta == 0:
             pass
-          elif setspd_delta == 1 and self.setspeed is not None:
+          elif setspd_delta == 1:
             self.setspeed = int(Params().get("vSetDis", encoding="utf8")) + 1
-          elif setspd_delta == 2 and self.setspeed is not None:
+          elif setspd_delta == 2:
             self.setspeed = int(Params().get("vSetDis", encoding="utf8")) - 1
+        self.setspeed_timer += 1
     else:
       self.vdiff = 0.
       self.resumebuttoncnt = 0
+
+    str_log1 = 'M/C={:03.0f}/{:03.0f}  TQ={:03.0f}  R={:03.0f}  ST={:03.0f}/{:01.0f}/{:01.0f}  G={:01.0f}  C={:01.0f}/{:01.0f}'.format(abs(self.model_speed), self.curve_speed, abs(new_steer), self.timer1.sampleTime(), self.steerMax, self.steerDeltaUp, self.steerDeltaDown, CS.out.cruiseGapSet, int(is_sc_run), setspd_delta)
+
+    trace1.printf1('{}  {}'.format(str_log1, self.str_log2))
 
     if CS.out.vEgo <= 1:
       self.sm.update(0)
