@@ -94,10 +94,7 @@ def build(spinner, dirty=False):
     f.unlink()
 
 
-if __name__ == "__main__":
+if __name__ == "__main__" and not PREBUILT:
   spinner = Spinner()
-  if not PREBUILT:
-    spinner.update_progress(0, 100)
-    build(spinner, dirty)
-  else:
-    spinner.update("fast booting")
+  spinner.update_progress(0, 100)
+  build(spinner, dirty)
