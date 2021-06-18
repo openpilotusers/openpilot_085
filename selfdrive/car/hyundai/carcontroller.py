@@ -362,9 +362,9 @@ class CarController():
       is_sc_run = self.SC.update(CS, sm, self)
       if is_sc_run:
         setspd_delta = self.SC.btn_type
-        if self.setspeed_timer >= 10:
+        if self.setspeed_timer >= 5:
           Params().put("vSetDis", str(self.setspeed))
-          self.setspeed_timer = -10
+          self.setspeed_timer = -5
         elif self.setspeed_timer == 0:
           if setspd_delta == 0:
             pass
