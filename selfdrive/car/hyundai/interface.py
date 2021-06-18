@@ -226,13 +226,13 @@ class CarInterface(CarInterfaceBase):
     ret.longitudinalTuning.kdBP = [0., 4., 9., 17., 23., 31.]
     ret.longitudinalTuning.kdV = [0.6, 1.1, 0.9, 0.8, 0.6, 0.5]
     ret.longitudinalTuning.kfBP = [0., 4., 9., 17., 23., 31.]
-    ret.longitudinalTuning.kfV = [1.0, 1.3, 1.7, 1.0, 0.9, 0.8]
+    ret.longitudinalTuning.kfV = [1.0, 1.5, 2.0, 1.0, 0.9, 0.8]
 
     ret.enableCamera = True
     ret.enableBsm = 0x58b in fingerprint[0]
 
     ret.stoppingControl = True
-    ret.startAccel = 0.0
+    ret.startAccel = 0.2
     ret.vCruisekph = 0
 
     # these cars require a special panda safety mode due to missing counters and checksums in the messages
