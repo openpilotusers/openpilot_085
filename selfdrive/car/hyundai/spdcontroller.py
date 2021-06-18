@@ -327,8 +327,8 @@ class SpdController():
 
         if set_speed >= int(round(self.cruise_set_speed_kph)):
             set_speed = int(round(self.cruise_set_speed_kph))
-        elif set_speed <= 5:
-            set_speed = 5
+        elif set_speed <= 15:
+            set_speed = 15
 
         # control process
         target_set_speed = set_speed
