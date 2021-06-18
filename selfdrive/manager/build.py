@@ -97,4 +97,5 @@ def build(spinner, dirty=False):
 if __name__ == "__main__":
   spinner = Spinner()
   spinner.update_progress(0, 100)
-  build(spinner, dirty)
+  if not PREBUILT:
+    build(spinner, dirty)
