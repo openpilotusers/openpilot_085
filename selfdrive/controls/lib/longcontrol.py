@@ -140,8 +140,6 @@ class LongControl():
 
       output_gb = self.pid.update(self.v_pid, v_ego_pid, speed=v_ego_pid, deadzone=deadzone, feedforward=a_target, freeze_integrator=prevent_overshoot)
       output_gb *= self.decel_damping
-      if a_target_raw < 0 and output_gb < 0:
-        output_gb = (output_gb * 0.75) + (a_target_raw * 0.25)
 
       if prevent_overshoot or CS.brakeHold:
         output_gb = min(output_gb, 0.0)
