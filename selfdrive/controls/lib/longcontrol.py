@@ -140,11 +140,13 @@ class LongControl():
 
       output_gb = self.pid.update(self.v_pid, v_ego_pid, speed=v_ego_pid, deadzone=deadzone, feedforward=a_target, freeze_integrator=prevent_overshoot)
       output_gb *= self.decel_damping
+      if a_target_raw < 0 and output_gb < 0:
+        output_gb = (output_gb * 0.5) + (a_target_raw * 0.5)
 
       if prevent_overshoot or CS.brakeHold:
         output_gb = min(output_gb, 0.0)
 
-    output_gb * 0.5 + # Intention is to stop, switch to a different brake control until we stop
+    # Intention is to stop, switch to a different brake control until we stop
     elif self.long_control_state == LongCtrlState.stopping:
       # Keep applying brakes until the car is stopped
       factor = 1
