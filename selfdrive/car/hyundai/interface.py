@@ -212,7 +212,7 @@ class CarInterface(CarInterfaceBase):
 
     # TODO: adjust?
     ret.gasMaxBP = [0., 4., 9., 17., 23., 31.]    # m/s
-    ret.gasMaxV = [0.3, 1.0, 0.5, 0.3, 0.2, 0.15]    # max gas allowed
+    ret.gasMaxV = [0.5, 1.0, 0.5, 0.3, 0.2, 0.15]    # max gas allowed
     ret.brakeMaxBP = [0., 8.]  # m/s
     ret.brakeMaxV = [0.7, 3.0]   # max brake allowed
 
@@ -232,7 +232,7 @@ class CarInterface(CarInterfaceBase):
     ret.enableBsm = 0x58b in fingerprint[0]
 
     ret.stoppingControl = True
-    ret.startAccel = 0.2
+    ret.startAccel = 0.3
     ret.vCruisekph = 0
 
     # these cars require a special panda safety mode due to missing counters and checksums in the messages

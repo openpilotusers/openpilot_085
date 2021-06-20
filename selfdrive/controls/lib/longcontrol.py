@@ -162,7 +162,7 @@ class LongControl():
     elif self.long_control_state == LongCtrlState.starting:
       factor = 1
       if hasLead:
-        factor = interp(dRel,[0.0,2.0,3.0,4.0,5.0], [0.0,0.7,1.0,1.5,3.0])
+        factor = interp(dRel,[0.0,2.0,3.0,4.0,5.0], [0.0,0.7,1.0,2.0,5.0])
       if output_gb < -0.2:
         output_gb += CP.startingBrakeRate / RATE * factor
       self.reset(CS.vEgo)
