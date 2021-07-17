@@ -24,6 +24,7 @@ from common.params import Params
 import common.log as trace1
 import common.CTime1000 as tm
 from random import randint
+from selfdrive.car import make_can_msg
 
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 
@@ -460,6 +461,8 @@ class CarController():
     
     if CS.cruise_buttons == 4:
       self.cancel_counter += 1
+      can_sends.append(make_can_msg(1345, b'\x00\x00\x00\x00\x00\x02\x00\x00', 0))
+      #can_sends.append(make_can_msg(1345, b'\x00\x00\x00\x00\x00\x04\x00\x00', 0))
     elif CS.acc_active:
       self.cancel_counter = 0
       if self.res_speed_timer > 0:
