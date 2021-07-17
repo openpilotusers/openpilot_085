@@ -461,7 +461,7 @@ class CarController():
     
     if CS.cruise_buttons == 4:
       self.cancel_counter += 1
-      can_sends.append(make_can_msg(1345, b'\x00\x00\x00\x00\x00\x02\x00\x00', 0))
+      can_sends.append(make_can_msg(1345, b'\x00\x00\x00\x00\x00\x00\x00\x40', 0))
       #can_sends.append(make_can_msg(1345, b'\x00\x00\x00\x00\x00\x04\x00\x00', 0))
     elif CS.acc_active:
       self.cancel_counter = 0
